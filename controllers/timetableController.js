@@ -111,7 +111,7 @@ exports.autoScheduleTimetable = async (req, res) => {
       const cat = (course.category || '').toLowerCase();
       // Strict mapping for theory courses (non-continuous)
       if (cat === 'theory') {
-        if ([1,2,3,4].includes(credits)) return { theory: credits, lab: 0, labIntegrated: 0, labBlock: 0 };
+        if ([1, 2, 3, 4].includes(credits)) return { theory: credits, lab: 0, labIntegrated: 0, labBlock: 0 };
         return { theory: 0, lab: 0, labIntegrated: 0, labBlock: 0 };
       }
       // Strict mapping for lab courses (continuous)
@@ -169,7 +169,7 @@ exports.autoScheduleTimetable = async (req, res) => {
       if (lab > 0 || labIntegrated > 0) {
         // Strict: Only schedule if a single continuous block of the required length is available for the batch
         const required = labBlock || (lab > 0 ? lab : labIntegrated);
-    for (const batch of batches) {
+        for (const batch of batches) {
           if (course.batch !== batch) continue;
           let scheduled = false;
           for (const day of days) {
@@ -198,7 +198,7 @@ exports.autoScheduleTimetable = async (req, res) => {
                 if (canAssign) {
                   // Assign the entire block as a single continuous lab
                   for (let j = 0; j < required; j++) {
-                  timetable[batch][day][timeSlots[i + j]] = {
+                    timetable[batch][day][timeSlots[i + j]] = {
                       ...course,
                       type: lab > 0 && !course.category.toLowerCase().includes('lab integrated') ? 'Lab' : 'LabIntegrated',
                       slotType: lab > 0 && !course.category.toLowerCase().includes('lab integrated') ? 'Lab' : 'LabIntegrated'
@@ -223,7 +223,7 @@ exports.autoScheduleTimetable = async (req, res) => {
     for (const course of courseList) {
       const { theory } = getCourseHourMapping(course);
       if (theory > 0) {
-    for (const batch of batches) {
+        for (const batch of batches) {
           if (course.batch !== batch) continue;
           let assigned = 0;
           let availableSlots = [];
@@ -312,7 +312,7 @@ exports.autoScheduleTimetable = async (req, res) => {
         }
       }
     }
-    
+
     // 11. Save the generated timetable for each batch
     const savedResults = [];
     for (const batch of batches) {
@@ -327,13 +327,13 @@ exports.autoScheduleTimetable = async (req, res) => {
         savedResults.push(newTT);
       }
     }
-    
+
     // After scheduling and rebalancing, ensure no day in a week is left empty for any batch
     for (const batch of batches) {
       let changed = true;
       while (changed) {
         changed = false;
-      for (const day of days) {
+        for (const day of days) {
           // If this day is empty for this batch
           let isEmpty = true;
           for (const slot of timeSlots) {
@@ -353,7 +353,7 @@ exports.autoScheduleTimetable = async (req, res) => {
                 if (timetable[batch][donorDay][slot]) donorCount++;
               }
               if (donorCount > 1) {
-        for (const slot of timeSlots) {
+                for (const slot of timeSlots) {
                   const entry = timetable[batch][donorDay][slot];
                   if (!entry) continue;
                   // For theory: ensure non-continuity and only one per course per day
@@ -520,7 +520,7 @@ exports.getRoomAllocations = async (req, res) => {
     res.json(allocations);
   } catch (err) {
     console.error('Error fetching room allocations (raw):', err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Failed to fetch room allocations (raw).',
       error: err.message,
       stack: err.stack
@@ -532,15 +532,15 @@ exports.createRoomAllocation = async (req, res) => {
   try {
     console.log('Received room allocation request:', req.body); // Debug log
     const { courseType, semester, batch, room, assignedBy, semesterType } = req.body;
-    
+
     // Validate required fields
     if (!courseType || !semester || !room || !assignedBy || !semesterType) {
       console.log('Missing required fields:', { courseType, semester, room, assignedBy, semesterType }); // Debug log
-      return res.status(400).json({ 
-        message: 'Missing required fields: courseType, semester, room, assignedBy, and semesterType are required.' 
+      return res.status(400).json({
+        message: 'Missing required fields: courseType, semester, room, assignedBy, and semesterType are required.'
       });
     }
-    
+
     // Prevent duplicate room assignment for the same semester and time
     let conflict;
     if (courseType === 'UG') {
@@ -552,11 +552,11 @@ exports.createRoomAllocation = async (req, res) => {
     }
     if (conflict) {
       console.log('Conflict found:', conflict); // Debug log
-      return res.status(400).json({ 
-        message: 'This room is already assigned to this batch (UG) or semester (PG).' 
+      return res.status(400).json({
+        message: 'This room is already assigned to this batch (UG) or semester (PG).'
       });
     }
-    
+
     const allocationData = { courseType, semester, batch, room, assignedBy, semesterType };
     console.log('Creating allocation with data:', allocationData); // Debug log
     const allocation = new RoomAllocation(allocationData);
@@ -565,9 +565,9 @@ exports.createRoomAllocation = async (req, res) => {
     res.status(201).json(allocation);
   } catch (err) {
     console.error('Error creating room allocation:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Failed to create room allocation.',
-      error: err.message 
+      error: err.message
     });
   }
 };
@@ -579,9 +579,9 @@ exports.deleteRoomAllocation = async (req, res) => {
     res.json({ message: 'Room allocation deleted successfully.' });
   } catch (err) {
     console.error('Error deleting room allocation:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Failed to delete room allocation.',
-      error: err.message 
+      error: err.message
     });
   }
 };
