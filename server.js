@@ -15,7 +15,7 @@ const userRoutes = require('./routes/userRoutes');
 dotenv.config();
 
 // Set default values for environment variables
-process.env.PORT = process.env.PORT || 5000;
+process.env.PORT = process.env.PORT || 5006;
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-this-in-production';
 
 // Create Express app
